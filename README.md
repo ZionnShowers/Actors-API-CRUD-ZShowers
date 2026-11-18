@@ -1,0 +1,6 @@
+- Zionn Showers
+- 11/18/2026
+- Actor API CRUD
+- Our goal was to implement what we learned from the lecture today and make a database about actors and being able to create, update, or delete any actor with their assigned country and year of birth.
+- Reviewer:
+- Peer reviewer:
