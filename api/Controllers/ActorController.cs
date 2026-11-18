@@ -40,6 +40,10 @@ namespace api.Controllers
         public ActionResult<ActorResponseDto> AddActor([FromBody] CreateActorDto dto)
         {
             ActorResponseDto actor = _services.Create(dto);
+            if(actor is null)
+            {
+                return Conflict($"There is already an actor with the same name.");
+            }
 
             return CreatedAtAction(nameof(GetById), new {id = actor.Id}, actor);
         }

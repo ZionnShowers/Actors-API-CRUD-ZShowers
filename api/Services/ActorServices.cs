@@ -16,6 +16,13 @@ namespace api.Services
 
         public ActorResponseDto Create(CreateActorDto dto)
         {
+            IEnumerable<Actor> actors = _repository.GetAll();
+            bool exists = actors.Any(a => a.Name.ToLower() == dto.Name.ToLower()); 
+            if (exists) 
+            {
+                return null;
+            }
+
             Actor actor = new Actor();
             actor.Name = dto.Name;
             actor.Country = dto.Country;
@@ -56,8 +63,9 @@ namespace api.Services
 
         public ActorResponseDto Update(int id, UpdateActorDto dto)
         {
+            // IEnumerable<Actor> actors = _repository.GetAll();
             Actor? actor = _repository.GetById(id);
-
+            // bool exists = actors.Any(a => a.Name.ToLower() == dto.Name.ToLower());
             if(actor is null)
             {
                 return null;

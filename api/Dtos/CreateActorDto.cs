@@ -1,8 +1,9 @@
-//This is what the client sends to create a movie, No Id, the database makes that.
+using System.ComponentModel.DataAnnotations;
 namespace api.Dtos
 {
     public class CreateActorDto
     {
+        [Required(ErrorMessage = "Must input a unique Name")]
         public string Name { get; set;} = string.Empty;
         public string Country { get; set; } = string.Empty;
         public int BirthYear { get; set; }
