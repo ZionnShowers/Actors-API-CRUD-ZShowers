@@ -17,7 +17,7 @@ namespace api.Services
             _repository = repository;
         }
 
-        public MovieResponseDto Create(CreateMovieDto dto)
+        public async Task<MovieResponseDto> CreateAsync(CreateMovieDto dto)
         {
             Movie movie = new Movie();
             movie.Title = dto.Title;
@@ -25,22 +25,25 @@ namespace api.Services
             movie.Rating = dto.Rating;
             movie.ReleaseYear = dto.ReleaseYear;
 
-            Movie saved = _repository.Add(movie);
+            Movie saved = await _repository.AddAsync(movie);
             //Sending back the same movie but now with an Id
             return ToDto(saved);
         }
 
-        public List<MovieResponseDto> GetAll()
+        //This method awaits the repository layer, so it HAS to be async and return a Task Too.
+        //Once the bottom layer is async, every layer that calls it becomes async as well.
+        public async Task<List<MovieResponseDto>> GetAllAsync()
         {
-            List<Movie> movies = _repository.GetAll();
+            // await waits for the database without blocking the thread.
+            List<Movie> movies = await _repository.GetAllAsync();
 
-            //Turning every element in this list into a dto
+            //Turning every Movie entity inta a MovieResponseDto.
             return movies.Select(ToDto).ToList();
         }
 
-        public MovieResponseDto? GetById(int id)
+        public async Task<MovieResponseDto?> GetByIdAsync(int id)
         {
-            Movie? movie = _repository.GetById(id);
+            Movie? movie = await _repository.GetByIdAsync(id);
             //Iff there is no movie pass null up to the controller
             if(movie is null)
             {
@@ -64,10 +67,10 @@ namespace api.Services
             };
         }
 
-        public MovieResponseDto Update(int id, UpdateMovieDto dto)
+        public async Task<MovieResponseDto?> UpdateAsync(int id, UpdateMovieDto dto)
         {
             //We must first load the movie from the database
-            Movie? movie = _repository.GetById(id);
+            Movie? movie = await _repository.GetByIdAsync(id);
 
             //if your id isn't in the database we return null
             if(movie is null)
@@ -83,14 +86,14 @@ namespace api.Services
             //Record when this movie is last changed
             movie.UpdatedAt = DateTime.UtcNow;
 
-            _repository.Update(movie);
+            await _repository.UpdateAsync(movie);
 
             return ToDto(movie);
         }
 
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            Movie? movie = _repository.GetById(id);
+            Movie? movie = await _repository.GetByIdAsync(id);
 
             if(movie is null)
             {
@@ -98,7 +101,7 @@ namespace api.Services
                 return false;
             }
 
-            _repository.Delete(movie);
+            await _repository.DeleteAsync(movie);
             return true;
         }
     }

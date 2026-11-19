@@ -17,29 +17,29 @@ namespace api.Controllers
 
 
         [HttpGet]
-        public ActionResult<List<ActorResponseDto>> GetAll()
+        public async Task<ActionResult<List<ActorResponseDto>>> GetAll()
         {
-            return Ok(_services.GetAll());
+            return Ok(await _services.GetAllAsync());
         }
 
 
         [HttpGet("GetById/{id}")]
-        public ActionResult<ActorResponseDto> GetById(int id)
+        public async Task<ActionResult<ActorResponseDto>> GetById(int id)
         {
-            ActorResponseDto actor = _services.GetById(id);
+            ActorResponseDto? actor = await _services.GetByIdAsync(id);
 
             if(actor == null)
             {
-                return NotFound();
+                return NotFound($"No actor with that id exists.");
             }
             return Ok(actor);
         }
 
 
         [HttpPost("AddActor")]
-        public ActionResult<ActorResponseDto> AddActor([FromBody] CreateActorDto dto)
+        public async Task<ActionResult<ActorResponseDto>> AddActor([FromBody] CreateActorDto dto)
         {
-            ActorResponseDto actor = _services.Create(dto);
+            ActorResponseDto actor = await _services.CreateAsync(dto);
             if(actor is null)
             {
                 return Conflict($"There is already an actor with the same name.");
@@ -50,13 +50,13 @@ namespace api.Controllers
 
 
         [HttpPut("Update/{id}")]
-        public ActionResult<ActorResponseDto> Update(int id, [FromBody] UpdateActorDto dto)
+        public async Task<ActionResult<ActorResponseDto>> Update(int id, [FromBody] UpdateActorDto dto)
         {
-            ActorResponseDto? actor = _services.Update(id, dto);
+            ActorResponseDto? actor = await _services.UpdateAsync(id, dto);
 
             if(actor is null)
             {
-                return NotFound();
+                return NotFound($"No actor with that id exists.");
             }
 
             return Ok(actor);
@@ -64,13 +64,13 @@ namespace api.Controllers
 
 
         [HttpDelete("delete/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            bool isDeleted = _services.Delete(id);
+            bool isDeleted = await _services.DeleteAsync(id);
 
             if (!isDeleted)
             {
-                return NotFound();
+                return NotFound($"No actor with that id exists.");
             }
 
             return NoContent();

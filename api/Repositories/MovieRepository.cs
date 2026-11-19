@@ -1,5 +1,6 @@
 using api.Data;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
@@ -16,40 +17,43 @@ namespace api.Repositories
             _db = db;
         }
 
-        public List<Movie> GetAll()
+        //async lets this method use await inside it.
+        public async Task<List<Movie>> GetAllAsync()
         {
             //we are going into our DB -> Movies Tables and returning all movies
-            return _db.Movies.ToList();
+            //await while DB is working. This thread is freed to handle other requests
+            return await _db.Movies.ToListAsync();
         }
 
-        public Movie? GetById(int id)
+        public async Task<Movie?> GetByIdAsync(int id)
         {
-            //Find loops up a row by its primary key. It returns null if there is no match
-            return _db.Movies.Find(id);
+            //FindAsync loops up a row by its primary key. It returns null if there is no match
+            return await _db.Movies.FindAsync(id);
         }
 
-        public Movie Add(Movie movie)
+        public async Task<Movie> AddAsync(Movie movie)
         {
             //Add only marks the movie as new. Nothing is in the database yet.
+            //That's why Add has no await, it doesn't talk to the database
             _db.Movies.Add(movie);
 
             //SaveChanges() sends INSERT to the database. After this, Movie row is filled in.
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return movie;
         }
 
-        public void Update(Movie movie)
+        public async Task UpdateAsync(Movie movie)
         {
             //We mark the movie is changed, and then save those changes to the DB
             _db.Movies.Update(movie);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-        public void Delete(Movie movie)
+        public async Task DeleteAsync(Movie movie)
         {
             //We mark the movie for removal, then SaveChanges send the delete
             _db.Movies.Remove(movie);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }
