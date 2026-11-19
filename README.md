@@ -2,5 +2,5 @@
 - 11/18/2026
 - Actor API CRUD
 - Our goal was to implement what we learned from the lecture today and make a database about actors and being able to create, update, or delete any actor with their assigned country and year of birth.
-- Reviewer:
-- Peer reviewer:
+- Reviewer: Callen Thomason
+- Peer reviewer: The GetAll and GetById work correctly, and the status codes are correct. An error message would be nice to include when a user is not found. Ex: "User with id {id} could not be found". You successfully madre it so you can't add the same actor twice, great work. I like the error message that comes with it. Nice job using conflict. The update and delete also work with the proper status codes. Code looks good overall.  
